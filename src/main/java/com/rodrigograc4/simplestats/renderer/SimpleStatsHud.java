@@ -69,6 +69,31 @@ public class SimpleStatsHud implements HudRenderCallback {
         }
     }
 
+
+    /* ===================== HELPERS ===================== */
+
+    private boolean hasMoreHotbarStats(SimpleStatsConfig c, String current) {
+        return switch (current) {
+            case "COORDS" -> c.showDirection || c.showDayCount || c.showTotemsPopped;
+            case "DIRECTION" -> c.showDayCount || c.showTotemsPopped;
+            case "DAY" -> c.showTotemsPopped;
+            default -> false;
+        };
+    }
+
+    private String getWorldKey(MinecraftClient client) {
+        if (client.getCurrentServerEntry() != null) {
+            return client.getCurrentServerEntry().name;
+        }
+
+        if (client.getServer() != null) {
+            return client.getServer().getSaveProperties().getLevelName();
+        }
+
+        return "UnknownWorld";
+    }
+
+
     /* ===================== TOP LEFT HUD ===================== */
 
     private void renderTopLeftHud(DrawContext ctx, MinecraftClient client, TextRenderer tr, SimpleStatsConfig c) {
@@ -78,12 +103,31 @@ public class SimpleStatsHud implements HudRenderCallback {
 
         // DAY
         if (c.showDayCount) {
-            long ticks = client.world.getTimeOfDay();
-            long days = (ticks / 24000L) + c.dayCountOffset;
+            long totalTicks = client.world.getTimeOfDay();
+            long days = (totalTicks / 24000L) + c.dayCountOffset;
 
-            ctx.drawTextWithShadow(tr, c.dayCountString, x, y, opaque(c.labelColor));
-            int dx = x + tr.getWidth(c.dayCountString);
+            long dayTime = totalTicks % 24000L;
+            int hours = (int) ((dayTime / 1000 + 6) % 24);
+            int minutes = (int) ((dayTime % 1000) * 60 / 1000);
+
+            String symbol = (dayTime < 12000) ? "☀" : "🌙";
+            String timeValue = String.format("%02d:%02d", hours, minutes);
+
+            int dx = x;
+
+            ctx.drawTextWithShadow(tr, c.dayCountString, dx, y, opaque(c.labelColor));
+            dx += tr.getWidth(c.dayCountString);
+
             ctx.drawTextWithShadow(tr, String.valueOf(days), dx, y, opaque(c.valueColor));
+            dx += tr.getWidth(String.valueOf(days));
+
+            if (c.showHours) {
+                String label2 = " " + symbol + " ";
+                ctx.drawTextWithShadow(tr, label2, dx, y, opaque(c.labelColor));
+                dx += tr.getWidth(label2);
+
+                ctx.drawTextWithShadow(tr, timeValue, dx, y, opaque(c.valueColor));
+            }
 
             y += spacing;
         }
@@ -115,24 +159,24 @@ public class SimpleStatsHud implements HudRenderCallback {
 
         // TOTEMS
         if (c.showTotemsPopped) {
-            String world = client.getCurrentServerEntry() != null
-                    ? client.getCurrentServerEntry().name
-                    : "Singleplayer";
-
-            String value = String.valueOf(c.getTotemsForWorld(world));
+            String worldKey = getWorldKey(client);
+            String value = String.valueOf(c.getTotemsForWorld(worldKey));
 
             ctx.drawTextWithShadow(tr, c.totemsPoppedString, x, y, opaque(c.labelColor));
-            ctx.drawTextWithShadow(tr, value,
+            ctx.drawTextWithShadow(
+                    tr,
+                    value,
                     x + tr.getWidth(c.totemsPoppedString),
                     y,
-                    opaque(c.valueColor));
+                    opaque(c.valueColor)
+            );
         }
     }
 
    /* ===================== HOTBAR HUD ===================== */
 
     private int getHotbarHudWidth(TextRenderer tr, MinecraftClient client, SimpleStatsConfig c) {
-        String sep = " | ";
+        String sep = "  |  ";
         int width = 0;
 
         if (c.showCoords) {
@@ -153,14 +197,21 @@ public class SimpleStatsHud implements HudRenderCallback {
         if (c.showDayCount) {
             long ticks = client.world.getTimeOfDay();
             long days = (ticks / 24000L) + c.dayCountOffset;
-            width += tr.getWidth(c.dayCountString) + tr.getWidth(String.valueOf(days)) + tr.getWidth(sep);
+
+            width += tr.getWidth(c.dayCountString);
+            width += tr.getWidth(String.valueOf(days));
+
+            if (c.showHours) {
+                width += tr.getWidth(" ☀ ");
+                width += tr.getWidth("00:00");
+            }
+
+            width += tr.getWidth(sep);
         }
 
         if (c.showTotemsPopped) {
-            String world = client.getCurrentServerEntry() != null
-                    ? client.getCurrentServerEntry().name
-                    : "Singleplayer";
-            String value = String.valueOf(c.getTotemsForWorld(world));
+            String worldKey = getWorldKey(client);
+            String value = String.valueOf(c.getTotemsForWorld(worldKey));
             width += tr.getWidth(c.totemsPoppedString) + tr.getWidth(value);
         }
 
@@ -181,16 +232,12 @@ public class SimpleStatsHud implements HudRenderCallback {
         int totalWidth = getHotbarHudWidth(tr, client, c);
         int drawX = (sw - totalWidth) / 2;
 
-        String separator = " | ";
+        String separator = "  |  ";
 
         /* ========= COORDS ========= */
         if (c.showCoords) {
             BlockPos p = client.player.getBlockPos();
             String coordsValue = p.getX() + ", " + p.getY() + ", " + p.getZ();
-
-            drawX -= tr.getWidth(
-                    c.coordsString + coordsValue + separator
-            ) / 2;
 
             ctx.drawTextWithShadow(tr, c.coordsString, drawX, y, opaque(c.labelColor));
             drawX += tr.getWidth(c.coordsString);
@@ -198,8 +245,10 @@ public class SimpleStatsHud implements HudRenderCallback {
             ctx.drawTextWithShadow(tr, coordsValue, drawX, y, opaque(c.valueColor));
             drawX += tr.getWidth(coordsValue);
 
-            ctx.drawTextWithShadow(tr, separator, drawX, y, opaque(c.labelColor));
-            drawX += tr.getWidth(separator);
+            if (hasMoreHotbarStats(c, "COORDS")) {
+                ctx.drawTextWithShadow(tr, separator, drawX, y, opaque(c.labelColor));
+                drawX += tr.getWidth(separator);
+            }
         }
 
         /* ========= DIRECTION (SHORT) ========= */
@@ -216,14 +265,23 @@ public class SimpleStatsHud implements HudRenderCallback {
             ctx.drawTextWithShadow(tr, dirValue, drawX, y, opaque(c.valueColor));
             drawX += tr.getWidth(dirValue);
 
-            ctx.drawTextWithShadow(tr, separator, drawX, y, opaque(c.labelColor));
-            drawX += tr.getWidth(separator);
+            if (hasMoreHotbarStats(c, "DIRECTION")) {
+                ctx.drawTextWithShadow(tr, separator, drawX, y, opaque(c.labelColor));
+                drawX += tr.getWidth(separator);
+            }
         }
 
         /* ========= DAY ========= */
         if (c.showDayCount) {
-            long ticks = client.world.getTimeOfDay();
-            long days = (ticks / 24000L) + c.dayCountOffset;
+            long totalTicks = client.world.getTimeOfDay();
+            long days = (totalTicks / 24000L) + c.dayCountOffset;
+
+            long dayTime = totalTicks % 24000L;
+            int hours = (int) ((dayTime / 1000 + 6) % 24);
+            int minutes = (int) ((dayTime % 1000) * 60 / 1000);
+
+            String symbol = (dayTime < 12000) ? "☀" : "🌙";
+            String timeValue = String.format("%02d:%02d", hours, minutes);
 
             ctx.drawTextWithShadow(tr, c.dayCountString, drawX, y, opaque(c.labelColor));
             drawX += tr.getWidth(c.dayCountString);
@@ -231,17 +289,26 @@ public class SimpleStatsHud implements HudRenderCallback {
             ctx.drawTextWithShadow(tr, String.valueOf(days), drawX, y, opaque(c.valueColor));
             drawX += tr.getWidth(String.valueOf(days));
 
-            ctx.drawTextWithShadow(tr, separator, drawX, y, opaque(c.labelColor));
-            drawX += tr.getWidth(separator);
+            if (c.showHours) {
+                String label2 = " " + symbol + " ";
+                ctx.drawTextWithShadow(tr, label2, drawX, y, opaque(c.labelColor));
+                drawX += tr.getWidth(label2);
+
+                ctx.drawTextWithShadow(tr, timeValue, drawX, y, opaque(c.valueColor));
+                drawX += tr.getWidth(timeValue);
+            }
+
+            if (hasMoreHotbarStats(c, "DAY")) {
+                ctx.drawTextWithShadow(tr, separator, drawX, y, opaque(c.labelColor));
+                drawX += tr.getWidth(separator);
+            }
         }
 
         /* ========= TOTEMS ========= */
+        /* ========= TOTEMS ========= */
         if (c.showTotemsPopped) {
-            String world = client.getCurrentServerEntry() != null
-                    ? client.getCurrentServerEntry().name
-                    : "Singleplayer";
-
-            String value = String.valueOf(c.getTotemsForWorld(world));
+            String worldKey = getWorldKey(client);
+            String value = String.valueOf(c.getTotemsForWorld(worldKey));
 
             ctx.drawTextWithShadow(tr, c.totemsPoppedString, drawX, y, opaque(c.labelColor));
             drawX += tr.getWidth(c.totemsPoppedString);

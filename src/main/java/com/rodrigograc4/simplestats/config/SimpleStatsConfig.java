@@ -88,7 +88,7 @@ public class SimpleStatsConfig implements ConfigData {
     }
 
     @ConfigEntry.Gui.Tooltip
-    public String directionLabel = "↑ ";
+    public String directionLabel = "⬆ ";
 
     // ===== TOTEMS =====
 
