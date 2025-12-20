@@ -3,7 +3,7 @@
   "id": "windrose",
   "version": "1.0.0",
   "name": "WindRose",
-  "description": "A new and simple HUD to display important stats.",
+  "description": "A new HUD to display important stats",
   "authors": ["rodrigograc4"],
   "contact": {},
   "license": "MIT",

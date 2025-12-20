@@ -1,3 +1,3 @@
 # WindRose
 
-A Minecraft Mod that adds a new and simple HUD to display important stats.
+A Minecraft Mod that adds a new HUD to display important stats.
