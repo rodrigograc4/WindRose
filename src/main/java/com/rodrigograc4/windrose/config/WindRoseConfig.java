@@ -41,7 +41,7 @@ public class WindRoseConfig implements ConfigData {
 
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.ColorPicker
-    public int labelColor = 0xBA2326;
+    public int labelColor = 0xE7544D;
 
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.ColorPicker
@@ -66,9 +66,6 @@ public class WindRoseConfig implements ConfigData {
 
     @ConfigEntry.Gui.Tooltip
     public boolean showCoords = true;
-
-    @ConfigEntry.Gui.Tooltip
-    public boolean coordsUseBrackets = false;
 
     @ConfigEntry.Gui.Tooltip
     public String coordsString = "XYZ: ";

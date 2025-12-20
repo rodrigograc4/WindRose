@@ -31,9 +31,6 @@
   "text.autoconfig.windrose.option.showCoords": "Show Coordinates",
   "text.autoconfig.windrose.option.showCoords.@Tooltip": "Enable or disable the XYZ position display.",
 
-  "text.autoconfig.windrose.option.coordsUseBrackets": "Bracket Coordinates",
-  "text.autoconfig.windrose.option.coordsUseBrackets.@Tooltip": "Wrap the coordinates value in brackets. Example: [123, 64, -456]",
-
   "text.autoconfig.windrose.option.coordsString": "Coordinates Label",
   "text.autoconfig.windrose.option.coordsString.@Tooltip": "Custom text to display before the XYZ coordinates.",
 
