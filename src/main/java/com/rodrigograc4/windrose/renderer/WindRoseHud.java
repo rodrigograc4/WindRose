@@ -35,11 +35,11 @@ public class WindRoseHud implements HudRenderCallback {
                     value = p.getX() + ", " + p.getY() + ", " + p.getZ();
                 }
                 case DAY -> value = String.valueOf((client.world.getTimeOfDay() / 24000L) + 1);
-                case FPS -> value = String.valueOf(client.getCurrentFps()); // CORRIGIDO: Referência não-estática
+                case FPS -> value = String.valueOf(client.getCurrentFps());
                 case DIRECTION -> value = getCardinalFull(client.player.getYaw());
                 case TOTEMS -> value = String.valueOf(c.getTotemsForWorld(getWorldKey(client)));
                 case SPACER -> {
-                    y += spacing / 2;
+                    y += spacing;
                     continue;
                 }
             }

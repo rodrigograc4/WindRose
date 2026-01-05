@@ -18,7 +18,6 @@ public class EditModuleScreen {
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         ConfigCategory category = builder.getOrCreateCategory(Text.literal("Settings"));
 
-        // Corrigido: Uso de addEntry em vez de add
         category.addEntry(entryBuilder.startBooleanToggle(Text.literal("Enabled"), module.enabled)
                 .setDefaultValue(true)
                 .setSaveConsumer(newValue -> module.enabled = newValue)

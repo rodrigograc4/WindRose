@@ -34,9 +34,5 @@ public class TotemUseMixin {
         }
 
         WindRoseConfig.INSTANCE.incrementTotems(worldKey);
-
-        System.out.println("!!! TOTEM CONTADO COM SUCESSO PARA WORLD/SERVER: " 
-                + worldKey 
-                + " | Total: " + WindRoseConfig.INSTANCE.getTotemsForWorld(worldKey));
     }
 }

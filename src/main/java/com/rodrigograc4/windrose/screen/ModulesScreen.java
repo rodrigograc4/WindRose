@@ -27,19 +27,19 @@ public class ModulesScreen extends Screen {
 
     @Override
     protected void init() {
-        int listBottom = this.height - 100;
+        int listBottom = this.height - 93;
 
         this.list = new ModuleListWidget(
                 this,
                 this.client,
                 this.width,
                 listBottom,
-                36,
+                33,
                 36
         );
 
         this.list.setX(0);
-        this.list.setY(36);
+        this.list.setY(33);
         
         this.list.refreshList();
         this.addDrawableChild(this.list);
@@ -52,7 +52,7 @@ public class ModulesScreen extends Screen {
                 list.refreshList();
                 updateButtonStates();
             }
-        }).dimensions(this.width / 2 - 155, buttonY, 100, 20).build());
+        }).dimensions(this.width / 2 - 154, buttonY, 100, 20).build());
 
         this.editButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("Edit"), b -> {
             var entry = list.getSelectedOrNull();
@@ -63,7 +63,7 @@ public class ModulesScreen extends Screen {
 
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Add"), b -> {
             this.client.setScreen(new AddModuleScreen(this));
-        }).dimensions(this.width / 2 + 55, buttonY, 100, 20).build());
+        }).dimensions(this.width / 2 + 54, buttonY, 100, 20).build());
 
         int totalWidth = 310;
 
@@ -81,14 +81,20 @@ public class ModulesScreen extends Screen {
     }
 
     public void updateButtonStates() {
-        boolean hasSelection = list.getSelectedOrNull() != null;
-        this.editButton.active = hasSelection;
-        this.deleteButton.active = hasSelection;
+        var entry = list.getSelectedOrNull();
+
+        boolean canEdit =
+                entry != null &&
+                entry.module.type != com.rodrigograc4.windrose.config.module.ModuleType.SPACER;
+
+        this.editButton.active = canEdit;
+        this.deleteButton.active = entry != null;
     }
+
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 12, 0xFFFFFFFF);
     }
 }

@@ -40,9 +40,7 @@ public class ModuleListWidget
         return getRowLeft() + getRowWidth() + 6;
     }
 
-    // =========================================================
-    // ===================== MODULE ENTRY ======================
-    // =========================================================
+
     public class ModuleEntry
             extends AlwaysSelectedEntryListWidget.Entry<ModuleEntry> {
 
@@ -60,7 +58,6 @@ public class ModuleListWidget
             int x = getRowLeft();
             int y = getY();
 
-            // Nome
             ctx.drawTextWithShadow(
                     client.textRenderer,
                     Text.literal(module.type.getName()),
@@ -69,7 +66,6 @@ public class ModuleListWidget
                     0xFFFFFFFF
             );
 
-            // Preview
             String preview = getPreviewValue();
             ctx.drawTextWithShadow(
                     client.textRenderer,
@@ -79,7 +75,6 @@ public class ModuleListWidget
                     0xFFAAAAAA
             );
 
-            // Ícones mover
             if (hovered) {
                 int index = children().indexOf(this);
 
@@ -87,7 +82,7 @@ public class ModuleListWidget
                     ctx.drawGuiTexture(
                             RenderPipelines.GUI_TEXTURED,
                             Identifier.ofVanilla("server_list/move_up"),
-                            x + 4, y, 32, 32
+                            x + 4, y, 36, 36
                     );
                 }
 
@@ -95,7 +90,7 @@ public class ModuleListWidget
                     ctx.drawGuiTexture(
                             RenderPipelines.GUI_TEXTURED,
                             Identifier.ofVanilla("server_list/move_down"),
-                            x + 4, y + 2, 32, 32
+                            x + 4, y, 36, 36
                     );
                 }
             }
