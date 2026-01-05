@@ -55,11 +55,14 @@ public class ModuleListWidget
         private String getPreviewValue() {
             return switch (module.type) {
                 case COORDS -> "100 64 200";
-                case DIRECTION -> "North";
+                case DIRECTION -> switch (WindRoseConfig.INSTANCE.directionMode) {
+                    case CARDINAL -> "North";
+                    case AXIS -> "Negative Z";
+                };
                 case FPS -> "120";
-                case DAY -> "100";
-                case TOTEMS -> "5";
-                case SPACER -> " ";
+                case DAY -> WindRoseConfig.INSTANCE.showHours ? "51   14:30" : "51";
+                case TOTEMS -> "7";
+                case SPACER -> "";
             };
         }
 

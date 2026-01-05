@@ -13,10 +13,10 @@ public class WindRoseModule {
     public WindRoseModule(ModuleType type) {
         this.type = type;
         this.defaultLabel = switch (type) {
-            case COORDS -> "XYZ: ";
             case DAY -> "Day: ";
+            case COORDS -> "XYZ: ";
             case DIRECTION -> "↑ ";
-            case TOTEMS -> "Totems: ";
+            case TOTEMS -> "Totems Used: ";
             case FPS -> "FPS: ";
             default -> "";
         };

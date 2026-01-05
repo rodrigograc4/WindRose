@@ -1,10 +1,10 @@
 package com.rodrigograc4.windrose.config.module;
 
 public enum ModuleType {
-    COORDS("Coordinates"),
     DAY("Day Counter"),
+    COORDS("Coordinates"),
     DIRECTION("Direction"),
-    TOTEMS("Totems Popped"),
+    TOTEMS("Totems Used"),
     FPS("FPS"),
     SPACER("Separator");
 

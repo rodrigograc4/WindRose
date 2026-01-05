@@ -22,6 +22,9 @@ public class WindRoseConfig implements ConfigData {
     public float linePadding = 0.0F;
     public boolean backgroundEnabled = true;
     public int backgroundColor = 0x6F505050;
+    public long dayCountOffset = 0L;
+    public boolean showHours = false;
+    public DirectionMode directionMode = DirectionMode.CARDINAL;
 
 
     public List<WindRoseModule> activeModules = new ArrayList<>();
@@ -57,5 +60,10 @@ public class WindRoseConfig implements ConfigData {
 
     public static void save() {
         AutoConfig.getConfigHolder(WindRoseConfig.class).save();
+    }
+
+    public enum DirectionMode {
+        CARDINAL,   // North / South / East / West
+        AXIS        // +X / -X / +Z / -Z
     }
 }

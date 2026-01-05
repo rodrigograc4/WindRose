@@ -16,7 +16,7 @@ public class WindRoseHud implements HudRenderCallback {
     @Override
     public void onHudRender(DrawContext ctx, RenderTickCounter tickCounter) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.player == null || !WindRoseConfig.INSTANCE.statsEnabled) return;
+        if (client == null || client.player == null || client.world == null || !WindRoseConfig.INSTANCE.statsEnabled) return;
 
         TextRenderer tr = client.textRenderer;
         WindRoseConfig c = WindRoseConfig.INSTANCE;
@@ -37,12 +37,30 @@ public class WindRoseHud implements HudRenderCallback {
                     BlockPos p = client.player.getBlockPos();
                     value = p.getX() + ", " + p.getY() + ", " + p.getZ();
                 }
-                case DAY -> value = String.valueOf((client.world.getTimeOfDay() / 24000L) + 1);
+                case DAY -> {
+                    long totalTicks = client.world.getTimeOfDay();
+                    long days = (totalTicks / 24000L) + c.dayCountOffset;
+
+                    if (c.showHours) {
+                        long dayTime = totalTicks % 24000L;
+                        int hours = (int) ((dayTime / 1000 + 6) % 24);
+                        int minutes = (int) ((dayTime % 1000) * 60 / 1000);
+                        value = days + "   " + String.format("%02d:%02d", hours, minutes);
+                    } else {
+                        value = String.valueOf(days);
+                    }
+                }
                 case FPS -> value = String.valueOf(client.getCurrentFps());
-                case DIRECTION -> value = getCardinalFull(client.player.getYaw());
+                case DIRECTION -> {
+                    float yaw = client.player.getYaw();
+                    value = switch (c.directionMode) {
+                        case CARDINAL -> getCardinalFull(yaw);
+                        case AXIS -> getAxisFull(yaw);
+                    };
+                }
                 case TOTEMS -> value = String.valueOf(c.getTotemsForWorld(getWorldKey(client)));
                 case SPACER -> {
-                    y += lineHeight; 
+                    y += lineHeight;
                     continue;
                 }
             }
@@ -51,10 +69,10 @@ public class WindRoseHud implements HudRenderCallback {
                 int textWidth = tr.getWidth(module.customLabel) + tr.getWidth(value);
                 if (c.backgroundEnabled) {
                     ctx.fill(
-                            x,           // 1px left of the text
-                            y,           // 1px above the text
-                            x + textWidth + 2, // width = text + 2px (1px each side)
-                            y + tr.fontHeight, // height = text (1px above and -1px below)
+                            x,                    // left
+                            y,                    // top
+                            x + textWidth + 2,    // right (1px padding each side)
+                            y + tr.fontHeight,    // bottom (1px above, 0px below)
                             c.backgroundColor
                     );
                 }
@@ -62,7 +80,7 @@ public class WindRoseHud implements HudRenderCallback {
                 ctx.drawTextWithShadow(tr, module.customLabel, x + 1, y + 1, opaque(module.labelColor));
                 ctx.drawTextWithShadow(tr, value, x + 1 + tr.getWidth(module.customLabel), y + 1, opaque(module.valueColor));
 
-                y += lineHeight; 
+                y += lineHeight;
             }
         }
     }
@@ -73,11 +91,19 @@ public class WindRoseHud implements HudRenderCallback {
         return "UnknownWorld";
     }
 
-    private String getCardinalFull(float yaw) {
+    private static String getCardinalFull(float yaw) {
         yaw = (yaw % 360 + 360) % 360;
         if (yaw >= 315 || yaw < 45) return "South";
         if (yaw < 135) return "West";
         if (yaw < 225) return "North";
         return "East";
+    }
+
+    private static String getAxisFull(float yaw) {
+        yaw = (yaw % 360 + 360) % 360;
+        if (yaw >= 315 || yaw < 45) return "Positive Z";
+        if (yaw < 135) return "Negative X";
+        if (yaw < 225) return "Negative Z";
+        return "Positive X";
     }
 }
