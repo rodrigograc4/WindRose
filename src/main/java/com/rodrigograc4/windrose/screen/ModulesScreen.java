@@ -65,17 +65,39 @@ public class ModulesScreen extends Screen {
             this.client.setScreen(new AddModuleScreen(this));
         }).dimensions(this.width / 2 + 54, buttonY, 100, 20).build());
 
-        int totalWidth = 310;
+        int bottomY = this.height - 28;
+        int doneWidth = 153;
+        int settingsWidth = 153;
+        int gap = 4;
 
-        this.addDrawableChild(ButtonWidget.builder(Text.literal("Done"), b -> {
-            WindRoseConfig.save();
-            this.client.setScreen(this.parent);
-        }).dimensions(
-                this.width / 2 - totalWidth / 2,
-                this.height - 28,
-                totalWidth,
+        int totalBottomWidth = settingsWidth + gap + doneWidth;
+        int startX = this.width / 2 - totalBottomWidth / 2;
+
+        // Settings
+        this.addDrawableChild(ButtonWidget.builder(
+                Text.literal("Settings"),
+                b -> this.client.setScreen(SettingsScreen.create(this))
+        ).dimensions(
+                startX,
+                bottomY,
+                settingsWidth,
                 20
         ).build());
+
+        // Done
+        this.addDrawableChild(ButtonWidget.builder(
+                Text.literal("Done"),
+                b -> {
+                    WindRoseConfig.save();
+                    this.client.setScreen(this.parent);
+                }
+        ).dimensions(
+                startX + settingsWidth + gap,
+                bottomY,
+                doneWidth,
+                20
+        ).build());
+
 
         updateButtonStates();
     }

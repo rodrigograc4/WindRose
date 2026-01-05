@@ -21,9 +21,12 @@ public class WindRoseHud implements HudRenderCallback {
         TextRenderer tr = client.textRenderer;
         WindRoseConfig c = WindRoseConfig.INSTANCE;
 
-        int x = (int) c.padding;
-        int y = (int) c.padding;
-        int spacing = tr.fontHeight + (int) c.linepadding;
+        int hudMargin = (int) c.margin;
+        int x = hudMargin;
+        int y = hudMargin;
+
+        int linePadding = (int) c.linePadding;
+        int lineHeight = tr.fontHeight + linePadding;
 
         for (WindRoseModule module : c.activeModules) {
             if (!module.enabled) continue;
@@ -39,15 +42,27 @@ public class WindRoseHud implements HudRenderCallback {
                 case DIRECTION -> value = getCardinalFull(client.player.getYaw());
                 case TOTEMS -> value = String.valueOf(c.getTotemsForWorld(getWorldKey(client)));
                 case SPACER -> {
-                    y += spacing;
+                    y += lineHeight; 
                     continue;
                 }
             }
 
-            if (!value.isEmpty() || module.type == com.rodrigograc4.windrose.config.module.ModuleType.SPACER) {
-                ctx.drawTextWithShadow(tr, module.customLabel, x, y, opaque(module.labelColor));
-                ctx.drawTextWithShadow(tr, value, x + tr.getWidth(module.customLabel), y, opaque(module.valueColor));
-                y += spacing;
+            if (!value.isEmpty()) {
+                int textWidth = tr.getWidth(module.customLabel) + tr.getWidth(value);
+                if (c.backgroundEnabled) {
+                    ctx.fill(
+                            x,           // 1px left of the text
+                            y,           // 1px above the text
+                            x + textWidth + 2, // width = text + 2px (1px each side)
+                            y + tr.fontHeight, // height = text (1px above and -1px below)
+                            c.backgroundColor
+                    );
+                }
+
+                ctx.drawTextWithShadow(tr, module.customLabel, x + 1, y + 1, opaque(module.labelColor));
+                ctx.drawTextWithShadow(tr, value, x + 1 + tr.getWidth(module.customLabel), y + 1, opaque(module.valueColor));
+
+                y += lineHeight; 
             }
         }
     }

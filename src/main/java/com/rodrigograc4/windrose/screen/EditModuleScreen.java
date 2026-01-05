@@ -24,7 +24,7 @@ public class EditModuleScreen {
                 .build());
 
         category.addEntry(entryBuilder.startStrField(Text.literal("Custom Label"), module.customLabel)
-                .setDefaultValue("")
+                .setDefaultValue(module.defaultLabel)
                 .setSaveConsumer(newValue -> module.customLabel = newValue)
                 .build());
 

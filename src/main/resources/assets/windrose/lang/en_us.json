@@ -4,11 +4,8 @@
   "text.autoconfig.windrose.option.statsEnabled": "Enable Mod",
   "text.autoconfig.windrose.option.statsEnabled.@Tooltip": "Toggles the entire HUD display on or off.",
 
-  "text.autoconfig.windrose.option.padding": "Screen Padding",
-  "text.autoconfig.windrose.option.padding.@Tooltip": "Sets the distance between the stats and the edge of the screen. || default: 3",
-
-  "text.autoconfig.windrose.option.linepadding": "Line Spacing",
-  "text.autoconfig.windrose.option.linepadding.@Tooltip": "Sets the vertical distance between each line of text. || default: 3",
+  "text.autoconfig.windrose.option.margin": "Screen Margin",
+  "text.autoconfig.windrose.option.margin.@Tooltip": "Sets the distance between the stats and the edge of the screen. || default: 3",
 
   "text.autoconfig.windrose.option.labelColor": "Label Color",
   "text.autoconfig.windrose.option.labelColor.@Tooltip": "Color used for labels (text before the value). || default: FF9D05",

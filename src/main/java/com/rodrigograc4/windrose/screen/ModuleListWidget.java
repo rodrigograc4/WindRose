@@ -9,6 +9,8 @@ import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.font.TextRenderer;
+
 
 import java.util.List;
 
@@ -45,16 +47,25 @@ public class ModuleListWidget
             extends AlwaysSelectedEntryListWidget.Entry<ModuleEntry> {
 
         public final WindRoseModule module;
-        private final MinecraftClient client = MinecraftClient.getInstance();
 
         public ModuleEntry(WindRoseModule module) {
             this.module = module;
         }
 
+        private String getPreviewValue() {
+            return switch (module.type) {
+                case COORDS -> "100 64 200";
+                case DIRECTION -> "North";
+                case FPS -> "120";
+                case DAY -> "100";
+                case TOTEMS -> "5";
+                case SPACER -> " ";
+            };
+        }
+
         @Override
         public void render(DrawContext ctx, int mouseX, int mouseY,
-                           boolean hovered, float delta) {
-
+                        boolean hovered, float delta) {
             int x = getRowLeft();
             int y = getY();
 
@@ -66,14 +77,19 @@ public class ModuleListWidget
                     0xFFFFFFFF
             );
 
-            String preview = getPreviewValue();
-            ctx.drawTextWithShadow(
-                    client.textRenderer,
-                    Text.literal(preview),
-                    x + 40,
-                    y + 18,
-                    0xFFAAAAAA
-            );
+            String label = module.customLabel;
+            String value = getPreviewValue();
+
+            TextRenderer tr = client.textRenderer;
+
+            if (!value.isEmpty() && WindRoseConfig.INSTANCE.backgroundEnabled) {
+                int width = tr.getWidth(label + value) + 4;
+                int height = tr.fontHeight;
+                ctx.fill(x + 40, y + 18, x + 40 + width, y + 18 + height, WindRoseConfig.INSTANCE.backgroundColor);
+            }
+
+            ctx.drawTextWithShadow(tr, Text.literal(label), x + 42, y + 19, opaque(module.labelColor));
+            ctx.drawTextWithShadow(tr, Text.literal(value), x + 42 + tr.getWidth(label), y + 19, opaque(module.valueColor));
 
             if (hovered) {
                 int index = children().indexOf(this);
@@ -94,6 +110,10 @@ public class ModuleListWidget
                     );
                 }
             }
+        }
+
+        private int opaque(int rgb) {
+            return 0xFF000000 | rgb;
         }
 
         @Override
@@ -125,19 +145,6 @@ public class ModuleListWidget
             list.set(b, tmp);
             refreshList();
             setSelected(children().get(b));
-        }
-
-        private String getPreviewValue() {
-
-
-            return switch (module.type) {
-                case COORDS -> "XYZ: 100 200 300";
-                case DIRECTION -> "↑ North";
-                case FPS -> "FPS: 120";
-                case DAY -> "Day 100";
-                case TOTEMS -> "Totems Popped: 5";
-                case SPACER -> " ";
-            };
         }
 
         @Override

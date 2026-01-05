@@ -18,29 +18,27 @@ public class WindRoseConfig implements ConfigData {
     public static WindRoseConfig INSTANCE;
 
     public boolean statsEnabled = true;
-    public HudPosition hudPosition = HudPosition.TOP_LEFT;
-    public float padding = 3.0F;
-    public float linepadding = 3.0F;
+    public float margin = 1.0F;
+    public float linePadding = 0.0F;
+    public boolean backgroundEnabled = true;
+    public int backgroundColor = 0x6F505050;
 
-    // Mudança importante: Garantir que a lista é inicializada corretamente
+
     public List<WindRoseModule> activeModules = new ArrayList<>();
 
     @ConfigEntry.Gui.Excluded
     public Map<String, Integer> totemsPerWorld = new HashMap<>();
 
-    public enum HudPosition { TOP_LEFT, HOTBAR_TOP }
-
     public static void init() {
         AutoConfig.register(WindRoseConfig.class, JanksonConfigSerializer::new);
         INSTANCE = AutoConfig.getConfigHolder(WindRoseConfig.class).getConfig();
         
-        // Verifica se a lista está nula (erro de carregamento) ou vazia
         if (INSTANCE.activeModules == null) {
             INSTANCE.activeModules = new ArrayList<>();
         }
         
         if (INSTANCE.activeModules.isEmpty()) {
-            System.out.println("[WindRose] Lista vazia detetada. A adicionar módulos padrão...");
+            System.out.println("[WindRose] List empty detected. Adding default modules...");
             INSTANCE.activeModules.add(new WindRoseModule(ModuleType.DAY));
             INSTANCE.activeModules.add(new WindRoseModule(ModuleType.COORDS));
             INSTANCE.activeModules.add(new WindRoseModule(ModuleType.DIRECTION));
