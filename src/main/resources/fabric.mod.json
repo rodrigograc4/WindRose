@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "windrose",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "WindRose",
   "description": "A new HUD to display important stats",
   "authors": ["rodrigograc4"],
