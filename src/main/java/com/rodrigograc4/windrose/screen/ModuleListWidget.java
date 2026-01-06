@@ -91,22 +91,22 @@ public class ModuleListWidget
             TextRenderer tr = client.textRenderer;
 
             if (!value.isEmpty() && WindRoseConfig.INSTANCE.backgroundEnabled) {
-                int width = tr.getWidth(label + value) + 4;
+                int width = tr.getWidth(label + value);
                 int height = tr.fontHeight;
-                ctx.fill(x + 40, y + 19, x + 40 + width + 4, y + 19 + height, WindRoseConfig.INSTANCE.backgroundColor);
+                ctx.fill(x + 40, y + 18, x + 40 + width + 2 + 4, y + 18 + height, WindRoseConfig.INSTANCE.backgroundColor);
             }
 
             if (module.type == ModuleType.FPS) {
                     if (WindRoseConfig.INSTANCE.labelPosition == LabelPosition.BEFORE_VALUE) {
-                        ctx.drawTextWithShadow(tr, Text.literal(label + sep), x + 42, y + 19, opaque(module.labelColor));
-                        ctx.drawTextWithShadow(tr, Text.literal(value), x + 42 + tr.getWidth(label + sep), y + 19, opaque(module.valueColor));
+                        ctx.drawTextWithShadow(tr, Text.literal(label + sep), x + 41, y + 19, opaque(module.labelColor));
+                        ctx.drawTextWithShadow(tr, Text.literal(value), x + 41 + tr.getWidth(label + sep), y + 19, opaque(module.valueColor));
                     } else {
-                        ctx.drawTextWithShadow(tr, Text.literal(value + sep), x + 42, y + 19, opaque(module.valueColor));
-                        ctx.drawTextWithShadow(tr, Text.literal(label), x + 42 + tr.getWidth(value + sep), y + 19, opaque(module.labelColor));
+                        ctx.drawTextWithShadow(tr, Text.literal(value + sep), x + 41, y + 19, opaque(module.valueColor));
+                        ctx.drawTextWithShadow(tr, Text.literal(label), x + 41 + tr.getWidth(value + sep), y + 19, opaque(module.labelColor));
                     }
             } else {
-                ctx.drawTextWithShadow(tr, Text.literal(label + sep), x + 42, y + 19, opaque(module.labelColor));
-                ctx.drawTextWithShadow(tr, Text.literal(value), x + 42 + tr.getWidth(label + sep), y + 19, opaque(module.valueColor));
+                ctx.drawTextWithShadow(tr, Text.literal(label + sep), x + 41, y + 19, opaque(module.labelColor));
+                ctx.drawTextWithShadow(tr, Text.literal(value), x + 41 + tr.getWidth(label + sep), y + 19, opaque(module.valueColor));
             }
 
             if (hovered) {
