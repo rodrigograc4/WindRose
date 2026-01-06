@@ -29,10 +29,13 @@ public class EditModuleScreen {
                 .setSaveConsumer(newValue -> module.customLabel = newValue)
                 .build());
 
-        category.addEntry(entryBuilder.startColorField(Text.literal("Label Color"), module.labelColor)
-                .setDefaultValue(0xE7544D)
-                .setSaveConsumer(newValue -> module.labelColor = newValue)
-                .build());
+        category.addEntry(entryBuilder.startColorField(
+                Text.literal("Label Color"),
+                module.labelColor
+        )
+        .setDefaultValue(WindRoseModule.defaultLabelColor(module.type))
+        .setSaveConsumer(newValue -> module.labelColor = newValue)
+        .build());
 
         category.addEntry(entryBuilder.startColorField(Text.literal("Value Color"), module.valueColor)
                 .setDefaultValue(0xFFFFFF)

@@ -20,10 +20,10 @@ public class WindRoseConfig implements ConfigData {
     public boolean statsEnabled = true;
     public float margin = 1.0F;
     public float linePadding = 0.0F;
-    public boolean backgroundEnabled = true;
+    public boolean backgroundEnabled = false;
     public int backgroundColor = 0x6F505050;
-    public long dayCountOffset = 0L;
-    public boolean showHours = false;
+    public long dayCountOffset = 1L;
+    public boolean showHours = true;
     public DirectionMode directionMode = DirectionMode.CARDINAL;
 
 

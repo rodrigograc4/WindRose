@@ -23,6 +23,7 @@ public class SettingsScreen {
                         Text.literal("Deactivate mod"),
                         !WindRoseConfig.INSTANCE.statsEnabled
                 )
+                .setDefaultValue(false)
                 .setSaveConsumer(v -> WindRoseConfig.INSTANCE.statsEnabled = !v)
                 .build()
         );
@@ -32,6 +33,7 @@ public class SettingsScreen {
                         Text.literal("Enable background"),
                         WindRoseConfig.INSTANCE.backgroundEnabled
                 )
+                .setDefaultValue(false)
                 .setSaveConsumer(v -> WindRoseConfig.INSTANCE.backgroundEnabled = v)
                 .build()
         );
@@ -50,6 +52,7 @@ public class SettingsScreen {
                         Text.literal("Margin"),
                         WindRoseConfig.INSTANCE.margin
                 )
+                .setDefaultValue(1.0F)
                 .setMin(0.0F)
                 .setMax(5.0F)
                 .setSaveConsumer(v -> WindRoseConfig.INSTANCE.margin = v)
@@ -61,6 +64,7 @@ public class SettingsScreen {
                         Text.literal("Line Padding"),
                         WindRoseConfig.INSTANCE.linePadding
                 )
+                .setDefaultValue(0.0F)
                 .setMin(0.0F)
                 .setMax(5.0F)
                 .setSaveConsumer(v -> WindRoseConfig.INSTANCE.linePadding = v)
