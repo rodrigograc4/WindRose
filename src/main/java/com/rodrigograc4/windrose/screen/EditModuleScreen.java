@@ -1,6 +1,7 @@
 package com.rodrigograc4.windrose.screen;
 
 import com.rodrigograc4.windrose.config.WindRoseConfig;
+import com.rodrigograc4.windrose.config.WindRoseConfig.LabelPosition;
 import com.rodrigograc4.windrose.config.module.ModuleType;
 import com.rodrigograc4.windrose.config.module.WindRoseModule;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
@@ -63,11 +64,28 @@ public class EditModuleScreen {
         }
 
         if (module.type == ModuleType.DIRECTION) {
-                category.addEntry(entryBuilder.startEnumSelector(Text.literal("Direction Mode"), WindRoseConfig.DirectionMode.class, WindRoseConfig.INSTANCE.directionMode)
+                category.addEntry(entryBuilder.startEnumSelector(
+                        Text.literal("Direction Mode"), 
+                        WindRoseConfig.DirectionMode.class, 
+                        WindRoseConfig.INSTANCE.directionMode
+                )
                     .setDefaultValue(WindRoseConfig.DirectionMode.CARDINAL)
                     .setSaveConsumer(newValue -> WindRoseConfig.INSTANCE.directionMode = newValue)
                     .build());
         }
+
+        if (module.type == ModuleType.FPS) {
+                category.addEntry(entryBuilder.startEnumSelector(
+                        Text.literal("Position of label"),
+                        WindRoseConfig.LabelPosition.class,
+                        WindRoseConfig.INSTANCE.labelPosition
+                )
+                .setDefaultValue(WindRoseConfig.LabelPosition.AFTER_VALUE)
+                .setSaveConsumer(newValue -> WindRoseConfig.INSTANCE.labelPosition = newValue)
+                .build()
+                );
+        }
+
 
         builder.setSavingRunnable(WindRoseConfig::save);
 

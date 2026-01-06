@@ -22,11 +22,11 @@ public class WindRoseModule {
 
         if (defaultLabel == null || defaultLabel.isEmpty()) {
             defaultLabel = switch (type) {
-                case DAY -> "Day: ";
-                case COORDS -> "XYZ: ";
-                case DIRECTION -> "↑ ";
-                case TOTEMS -> "Totems Used: ";
-                case FPS -> "FPS: ";
+                case DAY -> "Day:";
+                case COORDS -> "XYZ:";
+                case DIRECTION -> "↑";
+                case TOTEMS -> "Totems Used:";
+                case FPS -> "fps";
                 default -> "";
             };
         }

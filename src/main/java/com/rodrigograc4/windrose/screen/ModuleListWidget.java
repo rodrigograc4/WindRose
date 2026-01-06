@@ -1,6 +1,8 @@
 package com.rodrigograc4.windrose.screen;
 
 import com.rodrigograc4.windrose.config.WindRoseConfig;
+import com.rodrigograc4.windrose.config.WindRoseConfig.LabelPosition;
+import com.rodrigograc4.windrose.config.module.ModuleType;
 import com.rodrigograc4.windrose.config.module.WindRoseModule;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Click;
@@ -18,6 +20,7 @@ public class ModuleListWidget
         extends AlwaysSelectedEntryListWidget<ModuleListWidget.ModuleEntry> {
 
     private final ModulesScreen parent;
+    private static final String LABEL_VALUE_SEPARATOR = " ";
 
     public ModuleListWidget(ModulesScreen parent, MinecraftClient client,
                             int width, int height, int top, int itemHeight) {
@@ -72,6 +75,8 @@ public class ModuleListWidget
             int x = getRowLeft();
             int y = getY();
 
+            String sep = LABEL_VALUE_SEPARATOR;
+
             ctx.drawTextWithShadow(
                     client.textRenderer,
                     Text.literal(module.type.getName()),
@@ -88,11 +93,21 @@ public class ModuleListWidget
             if (!value.isEmpty() && WindRoseConfig.INSTANCE.backgroundEnabled) {
                 int width = tr.getWidth(label + value) + 4;
                 int height = tr.fontHeight;
-                ctx.fill(x + 40, y + 18, x + 40 + width, y + 18 + height, WindRoseConfig.INSTANCE.backgroundColor);
+                ctx.fill(x + 40, y + 19, x + 40 + width + 4, y + 19 + height, WindRoseConfig.INSTANCE.backgroundColor);
             }
 
-            ctx.drawTextWithShadow(tr, Text.literal(label), x + 42, y + 19, opaque(module.labelColor));
-            ctx.drawTextWithShadow(tr, Text.literal(value), x + 42 + tr.getWidth(label), y + 19, opaque(module.valueColor));
+            if (module.type == ModuleType.FPS) {
+                    if (WindRoseConfig.INSTANCE.labelPosition == LabelPosition.BEFORE_VALUE) {
+                        ctx.drawTextWithShadow(tr, Text.literal(label + sep), x + 42, y + 19, opaque(module.labelColor));
+                        ctx.drawTextWithShadow(tr, Text.literal(value), x + 42 + tr.getWidth(label + sep), y + 19, opaque(module.valueColor));
+                    } else {
+                        ctx.drawTextWithShadow(tr, Text.literal(value + sep), x + 42, y + 19, opaque(module.valueColor));
+                        ctx.drawTextWithShadow(tr, Text.literal(label), x + 42 + tr.getWidth(value + sep), y + 19, opaque(module.labelColor));
+                    }
+            } else {
+                ctx.drawTextWithShadow(tr, Text.literal(label + sep), x + 42, y + 19, opaque(module.labelColor));
+                ctx.drawTextWithShadow(tr, Text.literal(value), x + 42 + tr.getWidth(label + sep), y + 19, opaque(module.valueColor));
+            }
 
             if (hovered) {
                 int index = children().indexOf(this);

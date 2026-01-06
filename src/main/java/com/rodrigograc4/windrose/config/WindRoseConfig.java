@@ -25,6 +25,7 @@ public class WindRoseConfig implements ConfigData {
     public long dayCountOffset = 1L;
     public boolean showHours = true;
     public DirectionMode directionMode = DirectionMode.CARDINAL;
+    public LabelPosition labelPosition = LabelPosition.AFTER_VALUE;
 
 
     public List<WindRoseModule> activeModules = new ArrayList<>();
@@ -63,7 +64,37 @@ public class WindRoseConfig implements ConfigData {
     }
 
     public enum DirectionMode {
-        CARDINAL,   // North / South / East / West
-        AXIS        // +X / -X / +Z / -Z
+        CARDINAL("Cardinal"),
+        AXIS("Axis");
+
+        private final String display;
+
+        DirectionMode(String display) {
+            this.display = display;
+        }
+
+        @Override
+        public String toString() {
+            return display;
+        }
     }
+
+
+    public enum LabelPosition {
+        BEFORE_VALUE("Before Value"),
+        AFTER_VALUE("After Value");
+
+        private final String display;
+
+        LabelPosition(String display) {
+            this.display = display;
+        }
+
+        @Override
+        public String toString() {
+            return display;
+        }
+    }
+
+
 }

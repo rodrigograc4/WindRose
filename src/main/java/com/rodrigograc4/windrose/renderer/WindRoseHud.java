@@ -1,6 +1,8 @@
 package com.rodrigograc4.windrose.renderer;
 
 import com.rodrigograc4.windrose.config.WindRoseConfig;
+import com.rodrigograc4.windrose.config.WindRoseConfig.LabelPosition;
+import com.rodrigograc4.windrose.config.module.ModuleType;
 import com.rodrigograc4.windrose.config.module.WindRoseModule;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
@@ -12,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 public class WindRoseHud implements HudRenderCallback {
 
     private static int opaque(int rgb) { return 0xFF000000 | rgb; }
+    private static final String LABEL_VALUE_SEPARATOR = " ";
 
     @Override
     public void onHudRender(DrawContext ctx, RenderTickCounter tickCounter) {
@@ -27,6 +30,9 @@ public class WindRoseHud implements HudRenderCallback {
 
         int linePadding = (int) c.linePadding;
         int lineHeight = tr.fontHeight + linePadding;
+
+        String sep = LABEL_VALUE_SEPARATOR;
+
 
         for (WindRoseModule module : c.activeModules) {
             if (!module.enabled) continue;
@@ -69,16 +75,27 @@ public class WindRoseHud implements HudRenderCallback {
                 int textWidth = tr.getWidth(module.customLabel) + tr.getWidth(value);
                 if (c.backgroundEnabled) {
                     ctx.fill(
-                            x,                    // left
-                            y,                    // top
-                            x + textWidth + 2,    // right (1px padding each side)
-                            y + tr.fontHeight,    // bottom (1px above, 0px below)
+                            x,                          // left
+                            y,                          // top
+                            x + textWidth + 2 + 4,      // right (1px padding each side)
+                            y + tr.fontHeight,          // bottom (1px above, 0px below)
                             c.backgroundColor
                     );
                 }
 
-                ctx.drawTextWithShadow(tr, module.customLabel, x + 1, y + 1, opaque(module.labelColor));
-                ctx.drawTextWithShadow(tr, value, x + 1 + tr.getWidth(module.customLabel), y + 1, opaque(module.valueColor));
+                if (module.type == ModuleType.FPS) {
+                    if (c.labelPosition == LabelPosition.BEFORE_VALUE) {
+                        ctx.drawTextWithShadow(tr, value + sep, x + 1, y + 1, opaque(module.valueColor));
+                        ctx.drawTextWithShadow(tr, module.customLabel,x + 1 + tr.getWidth(value), y + 1, opaque(module.labelColor));
+                    } else {
+                        ctx.drawTextWithShadow(tr, module.customLabel + sep, x + 1, y + 1, opaque(module.labelColor));
+                        ctx.drawTextWithShadow(tr, value, x + 1 + tr.getWidth(module.customLabel + sep), y + 1, opaque(module.valueColor));
+                    }
+
+                } else {
+                    ctx.drawTextWithShadow(tr, module.customLabel + sep, x + 1, y + 1, opaque(module.labelColor));
+                    ctx.drawTextWithShadow(tr, value, x + 1 + tr.getWidth(module.customLabel + sep), y + 1, opaque(module.valueColor));
+                }
 
                 y += lineHeight;
             }
