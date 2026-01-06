@@ -41,7 +41,7 @@ public class WindRoseHud implements HudRenderCallback {
             switch (module.type) {
                 case COORDS -> {
                     BlockPos p = client.player.getBlockPos();
-                    value = p.getX() + ", " + p.getY() + ", " + p.getZ();
+                    value = p.getX() + "  " + p.getY() + "  " + p.getZ();
                 }
                 case DAY -> {
                     long totalTicks = client.world.getTimeOfDay();

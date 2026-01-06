@@ -57,7 +57,7 @@ public class ModuleListWidget
 
         private String getPreviewValue() {
             return switch (module.type) {
-                case COORDS -> "100 64 200";
+                case COORDS -> "100  64  200";
                 case DIRECTION -> switch (WindRoseConfig.INSTANCE.directionMode) {
                     case CARDINAL -> "North";
                     case AXIS -> "Negative Z";
