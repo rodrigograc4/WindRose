@@ -84,7 +84,7 @@ public class WindRoseHud implements HudRenderCallback {
                 }
 
                 if (module.type == ModuleType.FPS) {
-                    if (c.labelPosition == LabelPosition.BEFORE_VALUE) {
+                    if (c.labelPosition == LabelPosition.AFTER_VALUE) {
                         ctx.drawTextWithShadow(tr, value + sep, x + 1, y + 1, opaque(module.valueColor));
                         ctx.drawTextWithShadow(tr, module.customLabel,x + 1 + tr.getWidth(value), y + 1, opaque(module.labelColor));
                     } else {
