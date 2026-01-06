@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 public class WindRoseHud implements HudRenderCallback {
@@ -84,12 +85,12 @@ public class WindRoseHud implements HudRenderCallback {
                 }
 
                 if (module.type == ModuleType.FPS) {
-                    if (c.labelPosition == LabelPosition.AFTER_VALUE) {
-                        ctx.drawTextWithShadow(tr, value + sep, x + 1, y + 1, opaque(module.valueColor));
-                        ctx.drawTextWithShadow(tr, module.customLabel,x + 1 + tr.getWidth(value), y + 1, opaque(module.labelColor));
-                    } else {
+                    if (c.labelPosition == LabelPosition.BEFORE_VALUE) {
                         ctx.drawTextWithShadow(tr, module.customLabel + sep, x + 1, y + 1, opaque(module.labelColor));
                         ctx.drawTextWithShadow(tr, value, x + 1 + tr.getWidth(module.customLabel + sep), y + 1, opaque(module.valueColor));
+                    } else {
+                        ctx.drawTextWithShadow(tr, value + sep, x + 1, y + 1, opaque(module.valueColor));
+                        ctx.drawTextWithShadow(tr, module.customLabel,x + 1 + tr.getWidth(value + sep), y + 1, opaque(module.labelColor));
                     }
 
                 } else {
