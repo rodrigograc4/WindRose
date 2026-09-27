@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "windrose",
+  "version": "${version}",
+  "name": "WindRose",
+  "description": "A new HUD to display important stats",
+  "authors": ["rodrigograc4"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/windrose/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.rodrigograc4.windrose.WindRose"],
+    "modmenu": ["com.rodrigograc4.windrose.util.ModMenuIntegration"]
+  },
+  "mixins": [
+    {
+      "config": "windrose.mixin.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}

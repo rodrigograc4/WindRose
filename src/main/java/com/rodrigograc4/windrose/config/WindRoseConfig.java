@@ -1,0 +1,112 @@
+package com.rodrigograc4.windrose.config;
+
+import com.rodrigograc4.windrose.WindRose;
+import com.rodrigograc4.windrose.config.module.ModuleType;
+import com.rodrigograc4.windrose.config.module.WindRoseModule;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Config(name = "windrose")
+public class WindRoseConfig implements ConfigData {
+    @ConfigEntry.Gui.Excluded
+    public static WindRoseConfig INSTANCE;
+
+    public boolean statsEnabled = true;
+    public float margin = 1.0F;
+    public float linePadding = 0.0F;
+    public boolean backgroundEnabled = false;
+    public int backgroundColor = 0x6F505050;
+    public long dayCountOffset = 1L;
+    public boolean showHours = true;
+    public DirectionMode directionMode = DirectionMode.CARDINAL;
+    public LabelPosition labelPosition = LabelPosition.AFTER_VALUE;
+
+
+    public List<WindRoseModule> activeModules = new ArrayList<>();
+
+    @ConfigEntry.Gui.Excluded
+    public Map<String, Integer> totemsPerWorld = new HashMap<>();
+
+    public static void init() {
+        AutoConfig.register(WindRoseConfig.class, JanksonConfigSerializer::new);
+        INSTANCE = AutoConfig.getConfigHolder(WindRoseConfig.class).getConfig();
+        
+        if (INSTANCE.activeModules == null) {
+            INSTANCE.activeModules = new ArrayList<>();
+        }
+        
+        if (INSTANCE.activeModules.isEmpty()) {
+            WindRose.LOGGER.info("Module list empty, adding default modules");
+            INSTANCE.activeModules.add(new WindRoseModule(ModuleType.DAY));
+            INSTANCE.activeModules.add(new WindRoseModule(ModuleType.COORDS));
+            INSTANCE.activeModules.add(new WindRoseModule(ModuleType.DIRECTION));
+            save();
+        }
+    }
+
+    public void incrementTotems(String worldName) {
+        totemsPerWorld.merge(worldName, 1, Integer::sum);
+        save();
+    }
+
+    // Moves stats saved under an old key to its new key, unless the new key already has stats
+    public void migrateWorldKey(String legacyKey, String newKey) {
+        if (legacyKey == null || totemsPerWorld.containsKey(newKey)) return;
+
+        Integer totems = totemsPerWorld.remove(legacyKey);
+        if (totems != null) {
+            totemsPerWorld.put(newKey, totems);
+            save();
+        }
+    }
+
+    public int getTotemsForWorld(String worldName) {
+        return totemsPerWorld.getOrDefault(worldName, 0);
+    }
+
+    public static void save() {
+        AutoConfig.getConfigHolder(WindRoseConfig.class).save();
+    }
+
+    public enum DirectionMode {
+        CARDINAL("Cardinal"),
+        AXIS("Axis");
+
+        private final String display;
+
+        DirectionMode(String display) {
+            this.display = display;
+        }
+
+        @Override
+        public String toString() {
+            return display;
+        }
+    }
+
+
+    public enum LabelPosition {
+        BEFORE_VALUE("Before Value"),
+        AFTER_VALUE("After Value");
+
+        private final String display;
+
+        LabelPosition(String display) {
+            this.display = display;
+        }
+
+        @Override
+        public String toString() {
+            return display;
+        }
+    }
+
+
+}
