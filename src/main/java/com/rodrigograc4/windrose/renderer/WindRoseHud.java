@@ -4,6 +4,7 @@ import com.rodrigograc4.windrose.config.WindRoseConfig;
 import com.rodrigograc4.windrose.config.WindRoseConfig.LabelPosition;
 import com.rodrigograc4.windrose.config.module.ModuleType;
 import com.rodrigograc4.windrose.config.module.WindRoseModule;
+import com.rodrigograc4.windrose.util.Compass;
 import com.rodrigograc4.windrose.util.WorldKey;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.DeltaTracker;
@@ -23,11 +24,13 @@ public class WindRoseHud implements HudElement {
         Minecraft client = Minecraft.getInstance();
         WindRoseConfig c = WindRoseConfig.INSTANCE;
         if (!c.statsEnabled || client.player == null || client.level == null) return;
+        // The debug screen (F3) draws its text over the same corner.
+        if (c.hideWithDebugScreen && client.getDebugOverlay().showDebugScreen()) return;
 
         Font font = client.font;
-        int x = (int) c.margin;
-        int y = (int) c.margin;
-        int lineHeight = font.lineHeight + (int) c.linePadding;
+        int x = Math.round(c.margin);
+        int y = Math.round(c.margin);
+        int lineHeight = font.lineHeight + Math.round(c.linePadding);
 
         for (WindRoseModule module : c.activeModules) {
             if (!module.enabled) continue;
@@ -63,13 +66,7 @@ public class WindRoseHud implements HudElement {
                 yield days + "   " + String.format("%02d:%02d", hours, minutes);
             }
             case FPS -> String.valueOf(client.getFps());
-            case DIRECTION -> {
-                float yaw = client.player.getYRot();
-                yield switch (c.directionMode) {
-                    case CARDINAL -> getCardinalFull(yaw);
-                    case AXIS -> getAxisFull(yaw);
-                };
-            }
+            case DIRECTION -> Compass.describe(client.player.getYRot(), c.directionMode);
             case TOTEMS -> String.valueOf(c.getTotemsForWorld(WorldKey.current()));
             case SPACER -> "";
         };
@@ -96,21 +93,5 @@ public class WindRoseHud implements HudElement {
 
         ctx.text(font, first + sep, x + 1, y + 1, firstColor);
         ctx.text(font, second, x + 1 + firstWidth, y + 1, secondColor);
-    }
-
-    private static String getCardinalFull(float yaw) {
-        yaw = (yaw % 360 + 360) % 360;
-        if (yaw >= 315 || yaw < 45) return "South";
-        if (yaw < 135) return "West";
-        if (yaw < 225) return "North";
-        return "East";
-    }
-
-    private static String getAxisFull(float yaw) {
-        yaw = (yaw % 360 + 360) % 360;
-        if (yaw >= 315 || yaw < 45) return "Positive Z";
-        if (yaw < 135) return "Negative X";
-        if (yaw < 225) return "Negative Z";
-        return "Positive X";
     }
 }

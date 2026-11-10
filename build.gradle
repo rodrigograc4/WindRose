@@ -20,6 +20,16 @@ repositories {
 	maven { url = "https://maven.terraformersmc.com/releases/" }
 }
 
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "windrose-gametest"
+		enableGameTests = false
+		enableClientGameTests = true
+		eula = true
+	}
+}
+
 loom {
 
 	mods {

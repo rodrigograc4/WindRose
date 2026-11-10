@@ -3,6 +3,7 @@ package com.rodrigograc4.windrose.screen;
 import com.rodrigograc4.windrose.config.WindRoseConfig;
 import com.rodrigograc4.windrose.config.module.WindRoseModule;
 import com.rodrigograc4.windrose.renderer.WindRoseHud;
+import com.rodrigograc4.windrose.util.Compass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -57,10 +58,8 @@ public class ModuleListWidget
         private String getPreviewValue() {
             return switch (module.type) {
                 case COORDS -> "100  64  200";
-                case DIRECTION -> switch (WindRoseConfig.INSTANCE.directionMode) {
-                    case CARDINAL -> "North";
-                    case AXIS -> "Negative Z";
-                };
+                // Yaw 230: northeast, leaning east, so every mode has something to show.
+                case DIRECTION -> Compass.describe(230.0F, WindRoseConfig.INSTANCE.directionMode);
                 case FPS -> "120";
                 case DAY -> WindRoseConfig.INSTANCE.showHours ? "51   14:30" : "51";
                 case TOTEMS -> "7";
@@ -74,7 +73,7 @@ public class ModuleListWidget
             int x = getRowLeft();
             int y = getY();
 
-            ctx.text(minecraft.font, module.type.getName(), x + 40, y + 4, 0xFFFFFFFF);
+            ctx.text(minecraft.font, module.type.displayName(), x + 40, y + 4, 0xFFFFFFFF);
 
             String value = getPreviewValue();
             if (!value.isEmpty()) {
@@ -128,7 +127,7 @@ public class ModuleListWidget
 
         @Override
         public Component getNarration() {
-            return Component.literal(module.type.getName());
+            return module.type.displayName();
         }
     }
 }

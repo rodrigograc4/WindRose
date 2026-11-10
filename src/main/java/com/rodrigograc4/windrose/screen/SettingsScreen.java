@@ -9,70 +9,66 @@ import net.minecraft.network.chat.Component;
 
 public class SettingsScreen {
 
+    private static final int DEFAULT_BACKGROUND = 0x6F505050;
+
     public static Screen create(Screen parent) {
+        WindRoseConfig config = WindRoseConfig.INSTANCE;
 
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
-                .setTitle(Component.literal("WindRose Settings"));
+                .setTitle(Component.translatable("windrose.settings.title"));
 
         ConfigEntryBuilder eb = builder.entryBuilder();
-        ConfigCategory cat = builder.getOrCreateCategory(Component.literal("Settings"));
+        ConfigCategory cat = builder.getOrCreateCategory(Component.translatable("windrose.settings.category"));
 
-        cat.addEntry(
-                eb.startBooleanToggle(
-                        Component.literal("Deactivate mod"),
-                        !WindRoseConfig.INSTANCE.statsEnabled
-                )
+        cat.addEntry(eb.startBooleanToggle(Component.translatable("windrose.settings.showHud"), config.statsEnabled)
+                .setDefaultValue(true)
+                .setSaveConsumer(v -> config.statsEnabled = v)
+                .build());
+
+        cat.addEntry(eb.startBooleanToggle(Component.translatable("windrose.settings.hideWithDebugScreen"), config.hideWithDebugScreen)
                 .setDefaultValue(false)
-                .setSaveConsumer(v -> WindRoseConfig.INSTANCE.statsEnabled = !v)
-                .build()
-        );
+                .setTooltip(Component.translatable("windrose.settings.hideWithDebugScreen.tooltip"))
+                .setSaveConsumer(v -> config.hideWithDebugScreen = v)
+                .build());
 
-        cat.addEntry(
-                eb.startBooleanToggle(
-                        Component.literal("Enable background"),
-                        WindRoseConfig.INSTANCE.backgroundEnabled
-                )
+        cat.addEntry(eb.startBooleanToggle(Component.translatable("windrose.settings.background"), config.backgroundEnabled)
                 .setDefaultValue(false)
-                .setSaveConsumer(v -> WindRoseConfig.INSTANCE.backgroundEnabled = v)
-                .build()
-        );
+                .setSaveConsumer(v -> config.backgroundEnabled = v)
+                .build());
 
-        cat.addEntry(
-        eb.startColorField(Component.literal("Background color"), WindRoseConfig.INSTANCE.backgroundColor & 0xFFFFFF)
-                .setDefaultValue(0x505050)
-                .setSaveConsumer(rgb -> {
-                WindRoseConfig.INSTANCE.backgroundColor = 0x6F000000 | (rgb & 0xFFFFFF);
-                })
-                .build()
-        );
+        // Color and opacity are saved into the same ARGB value, each keeping the other's part.
+        cat.addEntry(eb.startColorField(Component.translatable("windrose.settings.backgroundColor"), config.backgroundColor & 0xFFFFFF)
+                .setDefaultValue(DEFAULT_BACKGROUND & 0xFFFFFF)
+                .setSaveConsumer(rgb -> config.backgroundColor = (config.backgroundColor & 0xFF000000) | (rgb & 0xFFFFFF))
+                .build());
 
-        cat.addEntry(
-                eb.startFloatField(
-                        Component.literal("Margin"),
-                        WindRoseConfig.INSTANCE.margin
-                )
-                .setDefaultValue(1.0F)
-                .setMin(0.0F)
-                .setMax(5.0F)
-                .setSaveConsumer(v -> WindRoseConfig.INSTANCE.margin = v)
-                .build()
-        );
+        cat.addEntry(eb.startIntSlider(Component.translatable("windrose.settings.backgroundOpacity"), alphaToPercent(config.backgroundColor >>> 24), 0, 100)
+                .setDefaultValue(alphaToPercent(DEFAULT_BACKGROUND >>> 24))
+                .setTextGetter(percent -> Component.literal(percent + "%"))
+                .setSaveConsumer(percent -> config.backgroundColor = (percentToAlpha(percent) << 24) | (config.backgroundColor & 0xFFFFFF))
+                .build());
 
-        cat.addEntry(
-                eb.startFloatField(
-                        Component.literal("Line Padding"),
-                        WindRoseConfig.INSTANCE.linePadding
-                )
-                .setDefaultValue(0.0F)
-                .setMin(0.0F)
-                .setMax(5.0F)
-                .setSaveConsumer(v -> WindRoseConfig.INSTANCE.linePadding = v)
-                .build()
-        );
+        cat.addEntry(eb.startIntSlider(Component.translatable("windrose.settings.margin"), Math.round(config.margin), 0, 5)
+                .setDefaultValue(1)
+                .setSaveConsumer(v -> config.margin = v)
+                .build());
+
+        cat.addEntry(eb.startIntSlider(Component.translatable("windrose.settings.linePadding"), Math.round(config.linePadding), 0, 5)
+                .setDefaultValue(0)
+                .setSaveConsumer(v -> config.linePadding = v)
+                .build());
 
         builder.setSavingRunnable(WindRoseConfig::save);
 
         return builder.build();
+    }
+
+    private static int alphaToPercent(int alpha) {
+        return Math.round(alpha * 100 / 255.0F);
+    }
+
+    private static int percentToAlpha(int percent) {
+        return Math.round(percent * 255 / 100.0F);
     }
 }

@@ -19,9 +19,12 @@ public class WindRoseConfig implements ConfigData {
     public static WindRoseConfig INSTANCE;
 
     public boolean statsEnabled = true;
+    public boolean hideWithDebugScreen = false;
+    // Whole pixels; floats only so configs saved by older versions still load.
     public float margin = 1.0F;
     public float linePadding = 0.0F;
     public boolean backgroundEnabled = false;
+    // ARGB: the alpha is the background opacity.
     public int backgroundColor = 0x6F505050;
     public long dayCountOffset = 1L;
     public boolean showHours = true;
@@ -30,6 +33,10 @@ public class WindRoseConfig implements ConfigData {
 
 
     public List<WindRoseModule> activeModules = new ArrayList<>();
+
+    // Set once the default modules have been added, so deleting every module sticks.
+    @ConfigEntry.Gui.Excluded
+    public boolean defaultModulesAdded = false;
 
     @ConfigEntry.Gui.Excluded
     public Map<String, Integer> totemsPerWorld = new HashMap<>();
@@ -42,13 +49,22 @@ public class WindRoseConfig implements ConfigData {
             INSTANCE.activeModules = new ArrayList<>();
         }
         
-        if (INSTANCE.activeModules.isEmpty()) {
+        INSTANCE.addDefaultModulesOnce();
+    }
+
+    // Only on a fresh install (or the first start after updating to a version with this flag), so
+    // a player who deletes every module doesn't get the defaults back on the next start.
+    public void addDefaultModulesOnce() {
+        if (defaultModulesAdded) return;
+
+        if (activeModules.isEmpty()) {
             WindRose.LOGGER.info("Module list empty, adding default modules");
-            INSTANCE.activeModules.add(new WindRoseModule(ModuleType.DAY));
-            INSTANCE.activeModules.add(new WindRoseModule(ModuleType.COORDS));
-            INSTANCE.activeModules.add(new WindRoseModule(ModuleType.DIRECTION));
-            save();
+            activeModules.add(new WindRoseModule(ModuleType.DAY));
+            activeModules.add(new WindRoseModule(ModuleType.COORDS));
+            activeModules.add(new WindRoseModule(ModuleType.DIRECTION));
         }
+        defaultModulesAdded = true;
+        save();
     }
 
     public void incrementTotems(String worldName) {
@@ -75,38 +91,16 @@ public class WindRoseConfig implements ConfigData {
         AutoConfig.getConfigHolder(WindRoseConfig.class).save();
     }
 
+    // Names are shown through the lang file: windrose.directionMode.<name in lower case>.
     public enum DirectionMode {
-        CARDINAL("Cardinal"),
-        AXIS("Axis");
-
-        private final String display;
-
-        DirectionMode(String display) {
-            this.display = display;
-        }
-
-        @Override
-        public String toString() {
-            return display;
-        }
+        CARDINAL,
+        AXIS,
+        AXIS_CARDINAL,
+        CARDINAL_AXIS
     }
-
 
     public enum LabelPosition {
-        BEFORE_VALUE("Before Value"),
-        AFTER_VALUE("After Value");
-
-        private final String display;
-
-        LabelPosition(String display) {
-            this.display = display;
-        }
-
-        @Override
-        public String toString() {
-            return display;
-        }
+        BEFORE_VALUE,
+        AFTER_VALUE
     }
-
-
 }

@@ -12,7 +12,7 @@ public class AddModuleScreen extends Screen {
     private final Screen parent;
 
     public AddModuleScreen(Screen parent) {
-        super(Component.literal("Add New Module"));
+        super(Component.translatable("windrose.add.title"));
         this.parent = parent;
     }
 
@@ -23,7 +23,7 @@ public class AddModuleScreen extends Screen {
         int x = this.width / 2 - buttonWidth / 2;
 
         for (ModuleType type : ModuleType.values()) {
-            this.addRenderableWidget(Button.builder(Component.literal(type.getName()), b -> {
+            this.addRenderableWidget(Button.builder(type.displayName(), b -> {
                 WindRoseConfig.INSTANCE.activeModules.add(new WindRoseModule(type));
                 WindRoseConfig.save();
                 this.onClose();
@@ -32,7 +32,7 @@ public class AddModuleScreen extends Screen {
             y += 24;
         }
 
-        this.addRenderableWidget(Button.builder(Component.literal("Cancel"), b -> this.onClose())
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), b -> this.onClose())
                 .bounds(this.width / 2 - 75, this.height - 30, 150, 20).build());
     }
 

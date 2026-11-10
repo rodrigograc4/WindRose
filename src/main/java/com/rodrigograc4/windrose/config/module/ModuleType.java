@@ -1,14 +1,19 @@
 package com.rodrigograc4.windrose.config.module;
 
-public enum ModuleType {
-    DAY("Day Counter"),
-    COORDS("Coordinates"),
-    DIRECTION("Direction"),
-    TOTEMS("Totems Used"),
-    FPS("FPS"),
-    SPACER("Separator");
+import net.minecraft.network.chat.Component;
 
-    private final String name;
-    ModuleType(String name) { this.name = name; }
-    public String getName() { return name; }
+import java.util.Locale;
+
+public enum ModuleType {
+    DAY,
+    COORDS,
+    DIRECTION,
+    TOTEMS,
+    FPS,
+    SPACER;
+
+    /** The module's name from the lang file: windrose.module.<name in lower case>. */
+    public Component displayName() {
+        return Component.translatable("windrose.module." + name().toLowerCase(Locale.ROOT));
+    }
 }

@@ -3,9 +3,13 @@
   "id": "windrose",
   "version": "${version}",
   "name": "WindRose",
-  "description": "A new HUD to display important stats",
+  "description": "A clean, customizable HUD with the day, coordinates, direction, totems used and FPS",
   "authors": ["rodrigograc4"],
-  "contact": {},
+  "contact": {
+    "homepage": "https://github.com/rodrigograc4/WindRose",
+    "issues": "https://github.com/rodrigograc4/WindRose/issues",
+    "sources": "https://github.com/rodrigograc4/WindRose"
+  },
   "license": "MIT",
   "icon": "assets/windrose/icon.png",
   "environment": "client",

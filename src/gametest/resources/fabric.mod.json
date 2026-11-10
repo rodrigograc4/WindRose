@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "windrose-gametest",
+  "version": "1.0.0",
+  "name": "WindRose Game Tests",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": ["com.rodrigograc4.windrose.gametest.WindRoseClientGameTest"]
+  },
+  "depends": {
+    "windrose": "*"
+  }
+}

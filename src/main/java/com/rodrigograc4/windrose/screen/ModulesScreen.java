@@ -14,7 +14,7 @@ public class ModulesScreen extends Screen {
     private Button deleteButton;
 
     public ModulesScreen(Screen parent) {
-        super(Component.literal("WindRose"));
+        super(Component.translatable("windrose.modules.title"));
         this.parent = parent;
     }
 
@@ -47,7 +47,7 @@ public class ModulesScreen extends Screen {
 
         int buttonY = this.height - 52;
 
-        this.deleteButton = this.addRenderableWidget(Button.builder(Component.literal("Delete"), b -> {
+        this.deleteButton = this.addRenderableWidget(Button.builder(Component.translatable("windrose.modules.delete"), b -> {
             var entry = list.getSelected();
             if (entry != null) {
                 WindRoseConfig.INSTANCE.activeModules.remove(entry.module);
@@ -56,14 +56,14 @@ public class ModulesScreen extends Screen {
             }
         }).bounds(this.width / 2 - 154, buttonY, 100, 20).build());
 
-        this.editButton = this.addRenderableWidget(Button.builder(Component.literal("Edit"), b -> {
+        this.editButton = this.addRenderableWidget(Button.builder(Component.translatable("windrose.modules.edit"), b -> {
             var entry = list.getSelected();
             if (entry != null) {
                 this.minecraft.gui.setScreen(EditModuleScreen.create(this, entry.module));
             }
         }).bounds(this.width / 2 - 50, buttonY, 100, 20).build());
 
-        this.addRenderableWidget(Button.builder(Component.literal("Add"),
+        this.addRenderableWidget(Button.builder(Component.translatable("windrose.modules.add"),
                 b -> this.minecraft.gui.setScreen(new AddModuleScreen(this))
         ).bounds(this.width / 2 + 54, buttonY, 100, 20).build());
 
@@ -76,12 +76,12 @@ public class ModulesScreen extends Screen {
         int startX = this.width / 2 - totalBottomWidth / 2;
 
         this.addRenderableWidget(Button.builder(
-                Component.literal("Settings"),
+                Component.translatable("windrose.modules.settings"),
                 b -> this.minecraft.gui.setScreen(SettingsScreen.create(this))
         ).bounds(startX, bottomY, settingsWidth, 20).build());
 
         this.addRenderableWidget(Button.builder(
-                Component.literal("Done"),
+                Component.translatable("gui.done"),
                 b -> this.onClose()
         ).bounds(startX + settingsWidth + gap, bottomY, doneWidth, 20).build());
 
