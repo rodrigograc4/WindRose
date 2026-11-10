@@ -61,7 +61,7 @@ public class EditModuleScreen {
 
         if (module.type == ModuleType.DIRECTION) {
             category.addEntry(eb.startEnumSelector(Component.translatable("windrose.edit.directionMode"), DirectionMode.class, config.directionMode)
-                    .setDefaultValue(DirectionMode.CARDINAL)
+                    .setDefaultValue(DirectionMode.AXIS_CARDINAL)
                     .setEnumNameProvider(mode -> enumName("windrose.directionMode.", mode))
                     .setSaveConsumer(v -> config.directionMode = v)
                     .build());

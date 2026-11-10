@@ -28,7 +28,7 @@ public class WindRoseConfig implements ConfigData {
     public int backgroundColor = 0x6F505050;
     public long dayCountOffset = 1L;
     public boolean showHours = true;
-    public DirectionMode directionMode = DirectionMode.CARDINAL;
+    public DirectionMode directionMode = DirectionMode.AXIS_CARDINAL;
     public LabelPosition labelPosition = LabelPosition.AFTER_VALUE;
 
 
@@ -59,12 +59,22 @@ public class WindRoseConfig implements ConfigData {
 
         if (activeModules.isEmpty()) {
             WindRose.LOGGER.info("Module list empty, adding default modules");
-            activeModules.add(new WindRoseModule(ModuleType.DAY));
-            activeModules.add(new WindRoseModule(ModuleType.COORDS));
-            activeModules.add(new WindRoseModule(ModuleType.DIRECTION));
+            activeModules.addAll(defaultModules());
         }
         defaultModulesAdded = true;
         save();
+    }
+
+    /** The HUD a fresh install starts with, top to bottom. */
+    public static List<WindRoseModule> defaultModules() {
+        return new ArrayList<>(List.of(
+                new WindRoseModule(ModuleType.FPS),
+                new WindRoseModule(ModuleType.TOTEMS),
+                new WindRoseModule(ModuleType.SPACER),
+                new WindRoseModule(ModuleType.DAY),
+                new WindRoseModule(ModuleType.SPACER),
+                new WindRoseModule(ModuleType.COORDS),
+                new WindRoseModule(ModuleType.DIRECTION)));
     }
 
     public void incrementTotems(String worldName) {

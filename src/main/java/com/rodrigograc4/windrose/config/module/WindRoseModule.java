@@ -56,10 +56,10 @@ public class WindRoseModule {
 
     public static int defaultLabelColor(ModuleType type) {
         return switch (type) {
-            case TOTEMS -> 0xF9D472;
-            case DAY -> 0xFF5555;
+            case TOTEMS -> 0xFFFFFF;
+            case DAY -> 0xF9D472;
             case COORDS -> 0xFFFFFF;
-            case DIRECTION -> 0x8FD3FE;
+            case DIRECTION -> 0xFF5555;
             case FPS -> 0xFFFFFF;
             default -> 0xFFFFFF;
         };

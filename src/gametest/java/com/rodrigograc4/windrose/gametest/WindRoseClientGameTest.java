@@ -1,7 +1,5 @@
 package com.rodrigograc4.windrose.gametest;
 
-import java.util.List;
-
 import com.mojang.blaze3d.platform.InputConstants;
 import com.rodrigograc4.windrose.config.WindRoseConfig;
 import com.rodrigograc4.windrose.config.WindRoseConfig.DirectionMode;
@@ -33,13 +31,9 @@ public class WindRoseClientGameTest implements FabricClientGameTest {
         context.getInput().resizeWindow(1708, 960);
         context.runOnClient(client -> {
             WindRoseConfig config = WindRoseConfig.INSTANCE;
-            config.activeModules = new java.util.ArrayList<>(List.of(
-                    new WindRoseModule(ModuleType.DAY),
-                    new WindRoseModule(ModuleType.COORDS),
-                    new WindRoseModule(ModuleType.DIRECTION),
-                    new WindRoseModule(ModuleType.TOTEMS),
-                    new WindRoseModule(ModuleType.FPS)));
-            config.directionMode = DirectionMode.CARDINAL;
+            // Exactly what a fresh install shows.
+            config.activeModules = WindRoseConfig.defaultModules();
+            config.directionMode = new WindRoseConfig().directionMode;
         });
 
         try (TestSingleplayerContext world = context.worldBuilder().create()) {
@@ -70,12 +64,14 @@ public class WindRoseClientGameTest implements FabricClientGameTest {
                 context.waitTicks(2);
                 context.takeScreenshot("windrose-3-direction-" + mode.name().toLowerCase());
             }
-            context.runOnClient(client -> WindRoseConfig.INSTANCE.directionMode = DirectionMode.CARDINAL);
+            context.runOnClient(client -> WindRoseConfig.INSTANCE.directionMode = new WindRoseConfig().directionMode);
 
             checkHideWithDebugScreen(context);
 
             // The HUD would show through, blurred, behind the config screens.
             context.runOnClient(client -> WindRoseConfig.INSTANCE.statsEnabled = false);
+            // Keep the cursor off the list, so no row shows its move arrows.
+            context.getInput().setCursorPos(0, 0);
             context.setScreen(() -> new ModulesScreen(null));
             context.waitTicks(5);
             context.takeScreenshot("windrose-5-modules");
